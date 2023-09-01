@@ -7,10 +7,7 @@ import {
   TextInput,
 } from "flowbite-react";
 import { useEffect, useState } from "react";
-import {
-  useLoginMutation,
-  useSignUpMutation,
-} from "../app/features/auth/authApi";
+import { useSignUpMutation } from "../app/features/auth/authApi";
 import { Link, useNavigate } from "react-router-dom";
 
 const Registration = () => {
@@ -43,6 +40,7 @@ const Registration = () => {
       name,
       email,
       password,
+      role: "user",
     });
   };
 

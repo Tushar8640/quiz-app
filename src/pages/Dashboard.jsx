@@ -1,7 +1,11 @@
+import Header from "../components/shared/Header";
+import { Outlet } from "react-router-dom";
+
 const Dashboard = () => {
   return (
-    <div className="grid place-items-center h-screen">
-      <h1 className="text-4xl font-bold text-purple-700">This is home page.</h1>
+    <div className=" place-items-center h-screen w-full">
+      <Header />
+      <Outlet />
     </div>
   );
 };

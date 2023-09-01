@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
 import { apiSlice } from "../api/apiSlice";
 
-export const todoApi = apiSlice.injectEndpoints({
+export const lessonApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getQuizByLesson: builder.query({
-      query: (id) => ({
-        url: `/quiz/${id}`,
+    getLessons: builder.query({
+      query: () => ({
+        url: `/lesson`,
         method: "GET",
       }),
     }),
@@ -106,19 +106,13 @@ export const todoApi = apiSlice.injectEndpoints({
         }
       },
     }),
-    getCategories: builder.query({
-      query: () => ({
-        url: `/category/categories`,
+    getSingleLesson: builder.query({
+      query: (id) => ({
+        url: `/lesson/${id}`,
         method: "GET",
       }),
     }),
   }),
 });
 
-export const {
-  useGetQuizByLessonQuery,
-  useGetCategoriesQuery,
-  useAddTodoMutation,
-  useDeleteTodoMutation,
-  useEditTodoMutation,
-} = todoApi;
+export const { useGetLessonsQuery, useGetSingleLessonQuery } = lessonApi;

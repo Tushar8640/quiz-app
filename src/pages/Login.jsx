@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import {
   Alert,
   Button,
@@ -22,6 +23,9 @@ const Login = () => {
     if (!data?.status) {
       setError(responseError?.message);
     }
+    if (!data?.status) {
+      setError(data?.message);
+    }
     if (responseError?.data) {
       setError(responseError?.data?.message);
     }
@@ -35,11 +39,12 @@ const Login = () => {
     login({
       email,
       password,
+     
     });
   };
 
   console.log(data, isLoading, responseError);
-
+  console.log(error);
   return (
     <div className="grid h-screen place-items-center">
       <form onSubmit={handleOnSubmit} className="flex flex-col gap-4 w-1/4">
@@ -80,10 +85,10 @@ const Login = () => {
           {isLoading && <Spinner aria-label="Spinner button example" />}
           <span className=" ml-3">{isLoading ? "Loading..." : "Login"}</span>
         </Button>
-        {isError && (
+        {(isError || error?.length > 0) && (
           <Alert color="failure">
             <span>
-              <span className="font-medium">Error !</span> Change {error}
+              <span className="font-medium">Error !</span> {error}
             </span>
           </Alert>
         )}

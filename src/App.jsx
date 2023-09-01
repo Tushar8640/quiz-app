@@ -5,6 +5,12 @@ import PublicRoute from "./components/PublicRoute";
 import PrivateRoute from "./components/PrivateRoute";
 import { useAuthCheck } from "./hooks/useAuthCheck";
 import Registration from "./pages/Registration";
+import HomePage from "./pages/HomePage";
+import AddLessonPage from "./pages/AddLessonPage";
+import AddQuixPage from "./pages/AddQuixPage";
+import LessonsPage from "./pages/LessonsPage";
+import SIngleLessonPage from "./pages/SIngleLessonPage";
+import TakeQuizPage from "./pages/TakeQuizPage";
 
 function App() {
   const router = createBrowserRouter([
@@ -15,6 +21,34 @@ function App() {
           <Dashboard />
         </PrivateRoute>
       ),
+      children: [
+        {
+          path: "/",
+          element: <HomePage />,
+        },
+
+        {
+          path: "/addlesson",
+          element: <AddLessonPage />,
+        },
+
+        {
+          path: "/addquiz",
+          element: <AddQuixPage />,
+        },
+        {
+          path: "/lessons",
+          element: <LessonsPage />,
+        },
+        {
+          path: "/lesson/:id",
+          element: <SIngleLessonPage />,
+        },
+        {
+          path: "/quiz/:id",
+          element: <TakeQuizPage />,
+        },
+      ],
     },
     {
       path: "/login",
