@@ -38,7 +38,25 @@ export const authApi = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    makeAdmin: builder.mutation({
+      query: (data) => ({
+        url: "/user/makeadmin",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    listOfUsers: builder.query({
+      query: () => ({
+        url: "/user/",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useSignUpMutation, useLoginMutation } = authApi;
+export const {
+  useSignUpMutation,
+  useLoginMutation,
+  useListOfUsersQuery,
+  useMakeAdminMutation,
+} = authApi;

@@ -9,31 +9,12 @@ export const lessonApi = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
-    addTodo: builder.mutation({
+    addLesson: builder.mutation({
       query: (data) => ({
-        url: `/todo/addtodo`,
+        url: `/lesson`,
         method: "POST",
         body: data,
       }),
-      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
-        const result = await queryFulfilled;
-        console.log(result);
-        console.log(arg);
-        const email = result.data?.todo?.user?.email;
-        const queryString = "";
-        if (result?.data?.status == "success") {
-          dispatch(
-            apiSlice.util.updateQueryData(
-              "getTodos",
-              { email, queryString },
-              (draft) => {
-                console.log(JSON.stringify(draft?.todos));
-                draft?.todos.unshift(result?.data?.todo);
-              }
-            )
-          );
-        }
-      },
     }),
     deleteTodo: builder.mutation({
       query: ({ id, email }) => ({
@@ -115,4 +96,8 @@ export const lessonApi = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetLessonsQuery, useGetSingleLessonQuery } = lessonApi;
+export const {
+  useGetLessonsQuery,
+  useGetSingleLessonQuery,
+  useAddLessonMutation,
+} = lessonApi;

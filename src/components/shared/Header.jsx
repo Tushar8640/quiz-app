@@ -1,6 +1,12 @@
-import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { userLoggedOut } from "../../app/features/auth/authSlice";
 
 export default function Header() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.auth.user);
+  console.log(user);
   return (
     <header className="p-4 bg-gray-100 text-gray-800">
       <div className="container flex justify-between h-16 mx-auto">
@@ -37,28 +43,56 @@ export default function Header() {
               Lessons
             </Link>
           </li>
-          <li className="flex">
-            <Link
-              to={"/addlesson"}
-              className="flex items-center px-4 -mb-1 border-b-2 border-transparent"
-            >
-              Add Lesson
-            </Link>
-          </li>
-          <li className="flex">
-            <Link
-              to={"/addquiz"}
-              className="flex items-center px-4 -mb-1 border-b-2 border-transparent"
-            >
-              AddQuiz
-            </Link>
-          </li>
+          {user?.role == "admin" && (
+            <li className="flex">
+              <Link
+                to={"/addlesson"}
+                className="flex items-center px-4 -mb-1 border-b-2 border-transparent"
+              >
+                Add Lesson
+              </Link>
+            </li>
+          )}
+
+          {user?.role === "admin" && (
+            <li className="flex">
+              <Link
+                to={"/addquiz"}
+                className="flex items-center px-4 -mb-1 border-b-2 border-transparent"
+              >
+                AddQuiz
+              </Link>
+            </li>
+          )}
+
+          {user?.role === "admin" && (
+            <li className="flex">
+              <Link
+                to={"/users"}
+                className="flex items-center px-4 -mb-1 border-b-2 border-transparent"
+              >
+                User List
+              </Link>
+            </li>
+          )}
         </ul>
         <div className="items-center flex-shrink-0 hidden lg:flex">
-          <button className="self-center px-8 py-3 rounded">Sign in</button>
-          <button className="self-center px-8 py-3 font-semibold rounded bg-blue-600 text-gray-50">
-            Sign up
-          </button>
+          {!user?._id && (
+            <button
+              onClick={() => navigate("/login")}
+              className="self-center px-8 py-3 font-semibold rounded bg-blue-600 text-gray-50"
+            >
+              Login
+            </button>
+          )}
+          {user?._id && (
+            <button
+              onClick={() => dispatch(userLoggedOut())}
+              className="self-center px-8 py-3 font-semibold rounded bg-blue-600 text-gray-50"
+            >
+              LogOut
+            </button>
+          )}
         </div>
         <button className="p-4 lg:hidden">
           <svg

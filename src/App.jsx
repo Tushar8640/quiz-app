@@ -11,6 +11,8 @@ import AddQuixPage from "./pages/AddQuixPage";
 import LessonsPage from "./pages/LessonsPage";
 import SIngleLessonPage from "./pages/SIngleLessonPage";
 import TakeQuizPage from "./pages/TakeQuizPage";
+import ResultPage from "./pages/ResultPage";
+import UserListPage from "./pages/UserListPage";
 
 function App() {
   const router = createBrowserRouter([
@@ -24,7 +26,7 @@ function App() {
       children: [
         {
           path: "/",
-          element: <HomePage />,
+          element: <LessonsPage />,
         },
 
         {
@@ -47,6 +49,14 @@ function App() {
         {
           path: "/quiz/:id",
           element: <TakeQuizPage />,
+        },
+        {
+          path: "/results",
+          element: <ResultPage />,
+        },
+        {
+          path: "/users",
+          element: <UserListPage />,
         },
       ],
     },

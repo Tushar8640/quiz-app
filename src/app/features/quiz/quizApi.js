@@ -3,112 +3,35 @@ import { apiSlice } from "../api/apiSlice";
 
 export const todoApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getQuizByLesson: builder.query({
+    getQuizByQuizId: builder.query({
       query: (id) => ({
         url: `/quiz/${id}`,
         method: "GET",
       }),
     }),
-    addTodo: builder.mutation({
+    getQuizByLesson: builder.query({
+      query: (id) => ({
+        url: `/quiz/lesson/${id}`,
+        method: "GET",
+      }),
+    }),
+    addQuiz: builder.mutation({
       query: (data) => ({
-        url: `/todo/addtodo`,
+        url: `/quiz/addquiz`,
         method: "POST",
         body: data,
       }),
-      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
-        const result = await queryFulfilled;
-        console.log(result);
-        console.log(arg);
-        const email = result.data?.todo?.user?.email;
-        const queryString = "";
-        if (result?.data?.status == "success") {
-          dispatch(
-            apiSlice.util.updateQueryData(
-              "getTodos",
-              { email, queryString },
-              (draft) => {
-                console.log(JSON.stringify(draft?.todos));
-                draft?.todos.unshift(result?.data?.todo);
-              }
-            )
-          );
-        }
-      },
     }),
-    deleteTodo: builder.mutation({
-      query: ({ id, email }) => ({
-        url: `/todo/deletetodo/${id}`,
-        method: "DELETE",
-      }),
-      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
-        const result = await queryFulfilled;
-        console.log(result);
-        console.log(arg);
-
-        const queryString = "";
-
-        if (result?.data?.status == "success") {
-          dispatch(
-            apiSlice.util.updateQueryData(
-              "getTodos",
-              { email: arg?.email, queryString: queryString },
-              (draft) => {
-                console.log("caching");
-                console.log(JSON.stringify(draft?.todos));
-                const filterDraft = draft?.todos?.filter(
-                  (d) => d?._id !== arg?.id
-                );
-
-                return {
-                  ...draft,
-                  todos: filterDraft,
-                };
-              }
-            )
-          );
-        }
-      },
-    }),
-    editTodo: builder.mutation({
-      query: ({ id, data }) => ({
-        url: `todo/edittodo/${id}`,
-        method: "PATCH",
+    saveResult: builder.mutation({
+      query: (data) => ({
+        url: `/result`,
+        method: "POST",
         body: data,
       }),
-      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
-        const result = await queryFulfilled;
-        const email = result?.data?.todo?.user?.email;
-        const updatedTodo = result?.data?.todo;
-        console.log(updatedTodo);
-        const queryString = "";
-        console.log(arg);
-
-        if (result?.data?.status == "success") {
-          dispatch(
-            apiSlice.util.updateQueryData(
-              "getTodos",
-              { email: email, queryString: queryString },
-              (draft) => {
-                console.log("caching when edit");
-                console.log(JSON.stringify(draft?.todos));
-                const findDraft = draft?.todos?.find((d) => d?._id == arg?.id);
-                console.log(JSON.stringify(findDraft));
-                findDraft.title = updatedTodo?.title;
-                findDraft.description = updatedTodo?.description;
-                findDraft.category = updatedTodo?.category;
-                findDraft.createdAt = updatedTodo?.createdAt;
-                findDraft.updatedAt = updatedTodo?.updatedAt;
-                findDraft.complete = updatedTodo?.complete;
-                findDraft.user = updatedTodo?.user;
-              }
-            )
-          );
-        }
-      },
     }),
-    getCategories: builder.query({
-      query: () => ({
-        url: `/category/categories`,
+    getResult: builder.query({
+      query: (id) => ({
+        url: `/result/${id}`,
         method: "GET",
       }),
     }),
@@ -116,9 +39,9 @@ export const todoApi = apiSlice.injectEndpoints({
 });
 
 export const {
+  useGetQuizByQuizIdQuery,
   useGetQuizByLessonQuery,
-  useGetCategoriesQuery,
-  useAddTodoMutation,
-  useDeleteTodoMutation,
-  useEditTodoMutation,
+  useAddQuizMutation,
+  useSaveResultMutation,
+  useGetResultQuery,
 } = todoApi;

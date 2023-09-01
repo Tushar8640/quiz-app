@@ -1,11 +1,12 @@
-import AddLessonForm from "../components/form/AddLessonForm";
+
+import AddQuizForm from "../components/form/AddQuizForm";
 
 export default function AddQuixPage() {
   return (
     <div>
       AddQuixPage
       <div>
-        <AddLessonForm />
+        <AddQuizForm />
       </div>
     </div>
   );
