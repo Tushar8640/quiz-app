@@ -33,9 +33,9 @@ export default function SingleLessonPage() {
       <h1 className="text-center text-3xl font-semibold mb-8">
         {lessonData?.lesson?.title || "Lesson Title"}
       </h1>
-      <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+      <div className="bg-white shadow-lg w-[700px] mx-auto rounded-lg overflow-hidden">
         {/* Render the lesson PDF */}
-        <div className="pdf-container h-[500px] overflow-y-scroll px-5">
+        <div className="pdf-container h-[500px]  overflow-y-scroll px-5">
           <Document
             file={`${serverBaseUrl}${lessonData?.lesson?.pdfLink}`}
             onLoadSuccess={onDocumentLoadSuccess}

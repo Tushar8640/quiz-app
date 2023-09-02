@@ -107,8 +107,7 @@ export default function AddQuizForm() {
                 <label htmlFor={`question${index}`} className="block mb-1 ml-1">
                   Question {index + 1}
                 </label>
-                <input
-                  type="text"
+                <textarea
                   id={`question${index}`}
                   name="title"
                   value={question.title}
@@ -116,15 +115,16 @@ export default function AddQuizForm() {
                   placeholder={`Question ${index + 1}`}
                   required
                   className="block w-full p-2 rounded focus:outline-none focus:ring focus:ring-blue-500 bg-gray-100"
-                />
+                  rows="3" // Set the number of visible rows
+                ></textarea>
+
                 <label
                   htmlFor={`options${index}`}
                   className="block mb-1 ml-1 mt-2"
                 >
                   Options (comma-separated)
                 </label>
-                <input
-                  type="text"
+                <textarea
                   id={`options${index}`}
                   name="options"
                   value={question.options.join(", ")}
@@ -132,15 +132,16 @@ export default function AddQuizForm() {
                   placeholder="Option 1, Option 2, Option 3, Option 4"
                   required
                   className="block w-full p-2 rounded focus:outline-none focus:ring focus:ring-blue-500 bg-gray-100"
-                />
+                  rows="3" // Set the number of visible rows
+                ></textarea>
+
                 <label
                   htmlFor={`answer${index}`}
                   className="block mb-1 ml-1 mt-2"
                 >
                   Correct Answer
                 </label>
-                <input
-                  type="text"
+                <textarea
                   id={`answer${index}`}
                   name="answer"
                   value={question.answer}
@@ -148,7 +149,8 @@ export default function AddQuizForm() {
                   placeholder="Correct Answer"
                   required
                   className="block w-full p-2 rounded focus:outline-none focus:ring focus:ring-blue-500 bg-gray-100"
-                />
+                  rows="3" // Set the number of visible rows
+                ></textarea>
               </div>
             ))}
             <button
