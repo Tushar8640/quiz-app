@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useGetSingleLessonQuery } from "../app/features/lesson/lessonApi";
 import { useGetQuizByLessonQuery } from "../app/features/quiz/quizApi";
@@ -10,8 +10,12 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/$
 export default function SingleLessonPage() {
   const params = useParams();
   const id = params.id;
-  const { data: lessonData } = useGetSingleLessonQuery(id);
-  const { data: lessonsQuizData } = useGetQuizByLessonQuery(id);
+  const { data: lessonData } = useGetSingleLessonQuery(id, {
+    refetchOnMountOrArgChange: true,
+  });
+  const { data: lessonsQuizData } = useGetQuizByLessonQuery(id, {
+    refetchOnMountOrArgChange: true,
+  });
   const serverBaseUrl = "http://localhost:5000/";
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
@@ -99,7 +103,10 @@ export default function SingleLessonPage() {
           </div>
         ))}
 
-        <h4 className="text-4xl"> {lessonsQuizData?.quiz?.length == 0 && <p>No Quiz found</p>}</h4>
+        <h4 className="text-4xl">
+          {" "}
+          {lessonsQuizData?.quiz?.length == 0 && <p>No Quiz found</p>}
+        </h4>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useGetLessonsQuery } from "../../app/features/lesson/lessonApi";
 import { useAddQuizMutation } from "../../app/features/quiz/quizApi";
+import { useNavigate } from "react-router-dom";
 
 export default function AddQuizForm() {
   const { data: lessonsData } = useGetLessonsQuery();
@@ -10,7 +11,7 @@ export default function AddQuizForm() {
     lessonId: "",
     questions: [],
   });
-
+  const navigate = useNavigate();
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setQuizData((prevData) => ({
@@ -51,7 +52,7 @@ export default function AddQuizForm() {
     // You can make an API request here
     console.log(quizData);
     AddQuizForm(quizData);
-
+    navigate(`/lesson/${quizData.lessonId}`);
     // Reset the form or handle any further actions
   };
 
