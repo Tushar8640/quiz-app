@@ -43,6 +43,14 @@ export default function Header() {
               Lessons
             </Link>
           </li>
+          <li className="flex">
+            <Link
+              to={"/results"}
+              className="flex items-center px-4 -mb-1 border-b-2 border-transparent"
+            >
+              Results
+            </Link>
+          </li>
           {user?.role == "admin" && (
             <li className="flex">
               <Link
