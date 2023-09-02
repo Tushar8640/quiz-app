@@ -1,6 +1,11 @@
+import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useGetSingleLessonQuery } from "../app/features/lesson/lessonApi";
 import { useGetQuizByLessonQuery } from "../app/features/quiz/quizApi";
+import { Document, Page, pdfjs } from "react-pdf";
+
+// Configure pdfjs worker to load PDFs properly
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 export default function SingleLessonPage() {
   const params = useParams();
@@ -8,28 +13,38 @@ export default function SingleLessonPage() {
   const { data: lessonData } = useGetSingleLessonQuery(id);
   const { data: lessonsQuizData } = useGetQuizByLessonQuery(id);
   const serverBaseUrl = "http://localhost:5000/";
-  
-  console.log(lessonData);
+  const [numPages, setNumPages] = useState(null);
+  const [pageNumber, setPageNumber] = useState(1);
+
+  const handlePageChange = (newPageNumber) => {
+    setPageNumber(newPageNumber);
+  };
+
+  const onDocumentLoadSuccess = ({ numPages }) => {
+    setNumPages(numPages);
+  };
+
+  if (!lessonData) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-center text-3xl font-semibold mb-8">
         {lessonData?.lesson?.title || "Lesson Title"}
       </h1>
       <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-        {/* Render the lesson PDF instead of the cover image */}
-        <iframe
-          title="Lesson PDF"
-          src={`${serverBaseUrl}${lessonData?.lesson?.pdfLink}`}
-          className="w-full h-60 sm:h-96"
-        ></iframe>
+        {/* Render the lesson PDF */}
+        <div className="pdf-container h-[500px] overflow-y-scroll px-5">
+          <Document
+            file={`${serverBaseUrl}${lessonData?.lesson?.pdfLink}`}
+            onLoadSuccess={onDocumentLoadSuccess}
+          >
+            <Page pageNumber={pageNumber} />
+          </Document>
+        </div>
         <div className="p-6 space-y-4">
           <div className="space-y-2">
-            <p className="text-xl font-semibold">
-              Author:{" "}
-              <a href="#" className="hover:underline">
-                Leroy Jenkins
-              </a>
-            </p>
             <p className="text-xs text-gray-600">
               Published on {lessonData?.lesson?.createdAt}
             </p>
@@ -41,6 +56,24 @@ export default function SingleLessonPage() {
             </p>
           </div>
         </div>
+      </div>
+
+      <div className="flex justify-center mt-4">
+        <button
+          onClick={() => handlePageChange(pageNumber - 1)}
+          disabled={pageNumber <= 1}
+          className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-l"
+        >
+          Previous Page
+        </button>
+        <span className="bg-gray-200 py-2 px-4">{`Page ${pageNumber} of ${numPages}`}</span>
+        <button
+          onClick={() => handlePageChange(pageNumber + 1)}
+          disabled={pageNumber >= numPages}
+          className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-r"
+        >
+          Next Page
+        </button>
       </div>
 
       <h2 className="text-center text-2xl font-semibold mt-8 mb-4">
@@ -58,13 +91,15 @@ export default function SingleLessonPage() {
               </h3>
               <Link
                 to={`/quiz/${quiz?._id}`}
-                className="block mt-4 p-3 bg-blue-500 hover:bg-blue-600 text-white rounded-md text-center"
+                className="block mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded text-center"
               >
                 Take Quiz
               </Link>
             </div>
           </div>
         ))}
+
+        <h4 className="text-4xl"> {lessonsQuizData?.quiz?.length == 0 && <p>No Quiz found</p>}</h4>
       </div>
     </div>
   );
