@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useGetSingleLessonQuery } from "../app/features/lesson/lessonApi";
 import { useGetQuizByLessonQuery } from "../app/features/quiz/quizApi";
@@ -27,7 +27,7 @@ export default function SingleLessonPage() {
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
   };
-
+  console.log(lessonsQuizData?.quiz);
   if (!lessonData) {
     return <div>Loading...</div>;
   }
@@ -37,6 +37,7 @@ export default function SingleLessonPage() {
       <h1 className="text-center text-3xl font-semibold mb-8">
         {lessonData?.lesson?.title || "Lesson Title"}
       </h1>
+
       <div className="bg-white shadow-lg w-[700px] mx-auto rounded-lg overflow-hidden">
         {/* Render the lesson PDF */}
         <div className="pdf-container h-[500px]  overflow-y-scroll px-5">
@@ -93,6 +94,9 @@ export default function SingleLessonPage() {
               <h3 className="text-xl font-semibold">
                 {i + 1}: {quiz?.title || "Quiz Title"}
               </h3>
+              <p className="text-xl font-semibold">
+                Duration: {quiz?.questions?.length || ""} min
+              </p>
               <Link
                 to={`/quiz/${quiz?._id}`}
                 className="block mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded text-center"

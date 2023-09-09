@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   useGetQuizByQuizIdQuery,
@@ -15,6 +15,31 @@ export default function TakeQuizPage() {
   const quizQuestions = quizData?.quiz?.questions || [];
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userResponses, setUserResponses] = useState([]);
+  const [remainingTime, setRemainingTime] = useState(0);
+  const [unansweredQuestionsCount, setUnansweredQuestionsCount] = useState(
+    quizQuestions.length
+  );
+  useEffect(() => {
+    const timerInterval = setInterval(() => {
+      if (remainingTime <= 0) {
+        clearInterval(timerInterval);
+      } else {
+        setRemainingTime((prevTime) => prevTime - 1);
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(timerInterval);
+    };
+  }, [remainingTime]);
+
+  // console.log(quizData.quiz.questions.length);
+  useEffect(() => {
+    if (quizData?.quiz?.questions?.length) {
+      setRemainingTime(quizData?.quiz?.questions?.length * 60);
+      setUnansweredQuestionsCount(quizData?.quiz?.questions?.length);
+    }
+  }, [quizData?.quiz?.questions?.length]);
 
   const handleNextQuestion = () => {
     const selectedOption = document.querySelector(
@@ -35,14 +60,14 @@ export default function TakeQuizPage() {
       ]);
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       selectedOption.checked = false;
+      // Decrease the unanswered questions count
+      setUnansweredQuestionsCount((prevCount) => prevCount - 1);
     } else {
       alert("Please select an option.");
     }
   };
 
   const handleSubmitQuiz = () => {
-    // Handle submitting the quiz responses, e.g., send them to the server
-    // You can make an API request here to save the responses
     const quizSubmission = {
       userId: userId,
       quizId: id,
@@ -50,21 +75,52 @@ export default function TakeQuizPage() {
     };
     saveResult(quizSubmission);
     console.log("Quiz Submission:", quizSubmission);
+
+    navigate("/results");
   };
 
-  useEffect(() => {
-    if (data?.status == "success" && !error) {
-      navigate("/results");
-    }
-  }, [data?.status, error, navigate]);
-  console.log(data);
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  if (currentQuestionIndex < quizQuestions.length) {
+  if (remainingTime <= 0 || currentQuestionIndex >= quizQuestions.length) {
+    console.log(userResponses.length, quizQuestions.length);
+    return (
+      <div className="container mx-auto p-6">
+        <h1 className="text-3xl font-semibold mb-4">{quizData?.quiz?.title}</h1>
+        <div className="bg-white p-6 rounded-lg shadow-lg">
+          <p className="font-semibold text-xl mb-4">Results:</p>
+          <ul className="list-disc pl-6">
+            {userResponses.map((response, index) => (
+              <li key={index} className="mb-2">
+                Question {response.questionNo}:{" "}
+                {response.isCorrect ? (
+                  <span className="text-green-500">Correct</span>
+                ) : (
+                  <span className="text-red-500">Incorrect</span>
+                )}{" "}
+                (Selected: {response.selectedOption}, Correct:{" "}
+                {response.correctAnswer})
+              </li>
+            ))}
+          </ul>
+          {quizQuestions.length - userResponses.length !== 0 && (
+            <p>Not Answered: {quizQuestions.length - userResponses.length}</p>
+          )}
+          <button
+            onClick={handleSubmitQuiz}
+            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700 mt-4"
+          >
+            Submit Quiz
+          </button>
+          <div className="text-center mt-4">
+            <p>Quiz Ended</p>
+          </div>
+        </div>
+      </div>
+    );
+  } else {
     const currentQuestion = quizQuestions[currentQuestionIndex];
-
     return (
       <div className="container mx-auto p-6">
         <h1 className="text-3xl font-semibold mb-4">{quizData.quiz.title}</h1>
@@ -98,36 +154,20 @@ export default function TakeQuizPage() {
           >
             Next
           </button>
-        </div>
-      </div>
-    );
-  } else {
-    // Render the results when all questions are answered
-    return (
-      <div className="container mx-auto p-6">
-        <h1 className="text-3xl font-semibold mb-4">{quizData?.quiz?.title}</h1>
-        <div className="bg-white p-6 rounded-lg shadow-lg">
-          <p className="font-semibold text-xl mb-4">Results:</p>
-          <ul className="list-disc pl-6">
-            {userResponses.map((response, index) => (
-              <li key={index} className="mb-2">
-                Question {response.questionNo}:{" "}
-                {response.isCorrect ? (
-                  <span className="text-green-500">Correct</span>
-                ) : (
-                  <span className="text-red-500">Incorrect</span>
-                )}{" "}
-                (Selected: {response.selectedOption}, Correct:{" "}
-                {response.correctAnswer})
-              </li>
-            ))}
-          </ul>
-          <button
-            onClick={handleSubmitQuiz}
-            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700 mt-4"
-          >
-            Submit Quiz
-          </button>
+          <div className="text-center mt-4">
+            {remainingTime < 60 ? (
+              <p>
+                Time Remaining: {remainingTime < 60 && remainingTime} seconds
+              </p>
+            ) : (
+              <p>
+                Time Remaining:{" "}
+                {remainingTime >= 60 && (remainingTime / 60).toFixed(1)} minutes
+              </p>
+            )}
+            {/* Display the number of unanswered questions */}
+            <p>Remaining Questions: {unansweredQuestionsCount}</p>
+          </div>
         </div>
       </div>
     );
